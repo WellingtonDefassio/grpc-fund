@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package sec03;
+option java_package = "io.defassio.proto.models.sec03";
+option java_multiple_files = true;
+
+message Person {
+  string name = 1;
+  int32 age = 2;
+  string last_name = 3;
+  string email = 4;
+  bool employed = 5;
+  double salary = 6;
+  int64 bank_account_number = 7;
+  sint32 balance = 8;
+
+}
