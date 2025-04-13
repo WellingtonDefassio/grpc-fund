@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package sec03;
+option java_package = "io.defassio.proto.models.sec03";
+option java_multiple_files = true;
+
+
+message Book {
+  string title = 1;
+  string author = 2;
+}
+
+message Library {
+  string name = 1;
+  repeated Book books = 2;
+}
