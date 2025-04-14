@@ -4,6 +4,7 @@ package sec03;
 option java_package = "io.defassio.proto.models.sec03";
 option java_multiple_files = true;
 
+
 message Person {
   string name = 1;
   int32 age = 2;
