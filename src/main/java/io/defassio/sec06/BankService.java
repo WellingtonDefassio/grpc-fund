@@ -1,17 +1,17 @@
 package io.defassio.sec06;
 
+import com.google.common.util.concurrent.Uninterruptibles;
 import com.google.protobuf.Empty;
-import io.defassio.proto.models.sec06.AccountBalance;
-import io.defassio.proto.models.sec06.AllAccountsResponse;
-import io.defassio.proto.models.sec06.BalanceCheckRequest;
-import io.defassio.proto.models.sec06.BankServiceGrpc;
+import io.defassio.proto.models.sec06.*;
 import io.defassio.sec06.repository.AccountRepository;
+import io.defassio.sec06.requestHandlers.DepositRequestHandler;
 import io.grpc.stub.StreamObserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class BankService extends BankServiceGrpc.BankServiceImplBase {
 
@@ -47,5 +47,33 @@ public class BankService extends BankServiceGrpc.BankServiceImplBase {
 
         responseObserver.onNext(response);
         responseObserver.onCompleted();
+    }
+
+    @Override
+    public void withdraw(WithdrawRequest request, StreamObserver<Money> responseObserver) {
+        var accountNumber = request.getAccountNumber();
+        var reqAmount = request.getAmount();
+        var accountBalance = AccountRepository.getBalance(accountNumber);
+        log.info("account number {} / reqAmount {}, accountBalance {}", accountNumber, reqAmount, accountBalance);
+
+        if (reqAmount > accountBalance) {
+            log.info("no balance");
+            responseObserver.onCompleted();
+            return;
+        }
+
+        for (int i = 0; i < (reqAmount / 10); i++) {
+            var money = Money.newBuilder().setAmount(10).build();
+            responseObserver.onNext(money);
+            log.info("money sent {}", money);
+            AccountRepository.deductAmount(accountNumber, 10);
+            Uninterruptibles.sleepUninterruptibly(1, TimeUnit.SECONDS);
+        }
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public StreamObserver<DepositRequest> deposit(StreamObserver<AccountBalance> responseObserver) {
+        return new DepositRequestHandler(responseObserver);
     }
 }
