@@ -3,7 +3,6 @@ package io.defassio.sec06;
 import io.defassio.proto.models.sec06.AccountBalance;
 import io.defassio.proto.models.sec06.BalanceCheckRequest;
 import io.defassio.proto.models.sec06.BankServiceGrpc;
-import io.defassio.sec04.Lec01Import;
 import io.grpc.ManagedChannelBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
